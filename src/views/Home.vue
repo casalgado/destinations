@@ -1,21 +1,41 @@
 <template>
   <div class="home">
     <p>{{ places }}</p>
-    <div v-for="city in cities" :key="city.id">
-      <input v-model="city" />
+    <div>
+      <button @click="addField">
+        field
+      </button>
     </div>
+    <table>
+      <tr>
+        <th>city</th>
+        <th>arrival</th>
+        <th>departure</th>
+        <th>duration</th>
+      </tr>
+      <CityInput
+        v-for="d in activeDestinations"
+        :key="d.id"
+        :id="d.id"
+        :populate="d"
+        @remove-field="removeField"
+        @update-field="updateField"
+      />
+    </table>
+
     <button @click="findCoordenates">find</button>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
+import CityInput from "../components/CityInput.vue";
 
 import axios from "axios";
 
 export default {
   name: "Home",
-  components: {},
+  components: { CityInput },
   data() {
     return {
       destinations: [
@@ -26,12 +46,34 @@ export default {
           arrival: "",
           departure: "",
           duration: 0,
+          lat: 0,
+          long: 0,
+          country: "",
         },
       ],
       places: [],
     };
   },
+  computed: {
+    activeDestinations: function() {
+      return this.destinations.filter((e) => e.active);
+    },
+  },
   methods: {
+    addField() {
+      let id = this.destinations.length;
+      this.destinations.push({
+        id: id,
+        active: true,
+        name: "",
+        arrival: "",
+        departure: "",
+        duration: 0,
+        lat: 0,
+        long: 0,
+        country: "",
+      });
+    },
     findCoordenates: function() {
       axios({
         method: "GET",
@@ -65,3 +107,16 @@ export default {
   },
 };
 </script>
+<style scoped>
+table,
+th {
+  border: 1px solid gray;
+  border-collapse: collapse;
+}
+table {
+  max-width: 500px;
+  margin: 0 auto;
+  border-right: none;
+  border-bottom: none;
+}
+</style>
