@@ -1,10 +1,15 @@
 <template>
   <div class="home">
-    <p>{{ places }}</p>
     <div>
       <button @click="addField">
         field
       </button>
+    </div>
+    <div id="map-container">
+      <img id="map-background" src="@/assets/world.svg" alt="" />
+      <svg id="map">
+        <circle cx="50" cy="50" r="40" fill="red" />
+      </svg>
     </div>
     <table>
       <tr>
@@ -24,6 +29,7 @@
     </table>
 
     <button @click="findCoordenates">find</button>
+    <p>{{ destinations }}</p>
   </div>
 </template>
 
@@ -74,7 +80,19 @@ export default {
         country: "",
       });
     },
-    findCoordenates: function() {
+    removeField(payload) {
+      this.destinations[payload.id].active = false;
+    },
+    updateField(payload) {
+      console.log(payload);
+      this.destinations[payload.id].city = payload.d.city;
+      this.destinations[payload.id].arrival = payload.d.arrival;
+      this.destinations[payload.id].departure = payload.d.departure;
+      this.destinations[payload.id].duration = payload.d.duration;
+
+      console.log(this.destinations);
+    },
+    findCoordenates: function(city) {
       axios({
         method: "GET",
         url: "https://opentripmap-places-v1.p.rapidapi.com/en/places/geoname",
@@ -86,7 +104,7 @@ export default {
           useQueryString: true,
         },
         params: {
-          name: this.city,
+          name: city,
         },
       })
         .then((response) => {
@@ -118,5 +136,28 @@ table {
   margin: 0 auto;
   border-right: none;
   border-bottom: none;
+}
+
+#map-container {
+  position: relative;
+  width: 800px;
+  height: 400px;
+  margin: 0 auto;
+}
+
+#map-background {
+  width: 100%;
+  padding: 0px;
+  margin: 0px;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+#map {
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 </style>

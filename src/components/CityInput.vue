@@ -1,16 +1,20 @@
 <template>
   <tr>
     <td>
-      <input type="text" v-model="city" />
+      <input type="text" v-model="d.city" @change="onChange('city')" />
     </td>
     <td>
-      <input type="date" v-model="arrival" />
+      <input type="date" v-model="d.arrival" @change="onChange('date')" />
     </td>
     <td>
-      <input type="date" v-model="departure" />
+      <input type="date" v-model="d.departure" @change="onChange('date')" />
     </td>
     <td>
-      <input type="number" v-model="duration" />
+      <input
+        type="number"
+        v-model="d.duration"
+        @change="onChange('duration')"
+      />
     </td>
     <td>
       <svg
@@ -19,6 +23,7 @@
         viewBox="0 0 24 24"
         width="24"
         id="clear"
+        @click="remove"
       >
         <path
           d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
@@ -29,7 +34,50 @@
 </template>
 
 <script>
-export default {};
+import moment from "moment";
+export default {
+  name: "CityInput",
+  props: {
+    id: Number,
+    populate: Object,
+  },
+  data() {
+    return {
+      d: {
+        city: "",
+        arrival: "",
+        departure: "",
+        duration: "",
+      },
+    };
+  },
+  methods: {
+    remove: function() {
+      this.$emit("remove-field", { id: this.id });
+    },
+    onChange: function(field) {
+      let arr = this.d.arrival || null;
+      let dep = this.d.departure || null;
+      let dur = this.d.duration || null;
+      console.log(field + arr + dur + dep);
+      switch (field) {
+        case "date":
+          this.d.duration = moment(dep).diff(moment(arr), "days") || "";
+
+          break;
+        case "duration":
+          this.d.departure = moment(arr)
+            .add(dur, "days")
+            .format("YYYY-MM-DD");
+
+          break;
+        default:
+          break;
+      }
+      this.$emit("update-field", { d: this.d, id: this.id });
+    },
+  },
+};
 </script>
 
 <style scoped>
@@ -43,7 +91,7 @@ input[type="number"] {
 }
 
 td {
-  border: 1px solid black;
+  border: 1px solid gray;
   border-collapse: collapse;
   padding: 2px;
 }
