@@ -35,6 +35,7 @@
 
 <script>
 import moment from "moment";
+import axios from "axios";
 export default {
   name: "CityInput",
   props: {
@@ -48,6 +49,8 @@ export default {
         arrival: "",
         departure: "",
         duration: "",
+        lon: 0,
+        lat: 0,
       },
     };
   },
@@ -63,18 +66,76 @@ export default {
       switch (field) {
         case "date":
           this.d.duration = moment(dep).diff(moment(arr), "days") || "";
-
+          this.$emit("update-field", { d: this.d, id: this.id });
           break;
         case "duration":
           this.d.departure = moment(arr)
             .add(dur, "days")
             .format("YYYY-MM-DD");
-
+          this.$emit("update-field", { d: this.d, id: this.id });
+          break;
+        case "city":
+          this.findCoordinates(this.d.city).then((e) => {
+            this.d.lon = this.lonScale(e.lon);
+            this.d.lat = this.latScale(e.lat);
+            console.log(this.d);
+            this.$emit("update-field", { d: this.d, id: this.id });
+          });
           break;
         default:
           break;
       }
-      this.$emit("update-field", { d: this.d, id: this.id });
+    },
+    latScale: function(coord) {
+      let maxdeg = 90;
+      let maxpix = 300;
+      coord = parseFloat(coord);
+      if (coord < 0) {
+        return maxpix + (Math.abs(coord) / maxdeg) * maxpix;
+      } else {
+        return maxpix - (coord / maxdeg) * maxpix;
+      }
+    },
+    lonScale: function(coord) {
+      let maxdeg = 180;
+      let maxpix = 600;
+      coord = parseFloat(coord);
+      if (coord > 0) {
+        return maxpix + (coord / maxdeg) * maxpix;
+      } else {
+        return maxpix - (Math.abs(coord) / maxdeg) * maxpix;
+      }
+    },
+    findCoordinates: function(city) {
+      return new Promise((resolve) => {
+        axios({
+          method: "GET",
+          url: "https://opentripmap-places-v1.p.rapidapi.com/en/places/geoname",
+          headers: {
+            "content-type": "application/octet-stream",
+            "x-rapidapi-host": "opentripmap-places-v1.p.rapidapi.com",
+            "x-rapidapi-key":
+              "a4155f4872msh83b76cd21659288p1f840fjsnae620982cab8",
+            useQueryString: true,
+          },
+          params: {
+            name: city,
+          },
+        })
+          .then((response) => {
+            let r = response.data;
+            let obj = {
+              name: r.name,
+              lat: r.lat,
+              lon: r.lon,
+              country: r.country,
+            };
+            resolve(obj);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      });
     },
   },
 };
