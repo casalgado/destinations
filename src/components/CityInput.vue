@@ -48,7 +48,7 @@ export default {
         city: "",
         arrival: "",
         departure: "",
-        duration: "",
+        duration: 1,
         lon: 0,
         lat: 0,
       },
@@ -61,7 +61,7 @@ export default {
     onChange: function(field) {
       let arr = this.d.arrival || null;
       let dep = this.d.departure || null;
-      let dur = this.d.duration || null;
+      let dur = this.d.duration || 1;
       console.log(field + arr + dur + dep);
       switch (field) {
         case "date":
@@ -125,7 +125,6 @@ export default {
           .then((response) => {
             let r = response.data;
             let obj = {
-              name: r.name,
               lat: r.lat,
               lon: r.lon,
               country: r.country,

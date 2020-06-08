@@ -1,23 +1,21 @@
 <template>
   <div class="home">
-    <div>
-      <button @click="addField">
-        field
-      </button>
-    </div>
     <div id="map-container">
       <img id="map-background" src="@/assets/world.svg" alt="" />
       <svg id="map">
         <circle
-          v-for="dest in destinations"
+          v-for="dest in activeDestinations"
           :key="dest.id"
           :cx="dest.lon"
           :cy="dest.lat"
-          r="2"
+          :r="dest.radius"
           fill="red"
         />
       </svg>
     </div>
+    <button @click="addField">
+      add destination
+    </button>
     <table>
       <tr>
         <th>city</th>
@@ -55,9 +53,10 @@ export default {
           name: "",
           arrival: "",
           departure: "",
-          duration: 0,
+          duration: 1,
+          radius: 1,
           lat: 0,
-          long: 0,
+          lon: 0,
           country: "",
         },
       ],
@@ -65,7 +64,12 @@ export default {
   },
   computed: {
     activeDestinations: function() {
-      return this.destinations.filter((e) => e.active);
+      return this.destinations.filter((e) => e.active).reverse();
+    },
+    durations: function() {
+      return this.destinations
+        .filter((e) => e.active)
+        .map((e) => parseInt(e.duration));
     },
   },
   methods: {
@@ -77,7 +81,8 @@ export default {
         name: "",
         arrival: "",
         departure: "",
-        duration: 0,
+        duration: 1,
+        radius: 1,
         lat: 0,
         long: 0,
         country: "",
@@ -90,6 +95,7 @@ export default {
       this.destinations[payload.id].city = payload.d.city;
       this.destinations[payload.id].arrival = payload.d.arrival;
       this.destinations[payload.id].departure = payload.d.departure;
+      this.destinations[payload.id].radius = 3;
       this.destinations[payload.id].duration = payload.d.duration;
       this.destinations[payload.id].lat = payload.d.lat;
       this.destinations[payload.id].lon = payload.d.lon;
@@ -136,5 +142,9 @@ table {
   position: absolute;
   top: 0;
   left: 0;
+}
+
+button {
+  margin: 10px;
 }
 </style>
