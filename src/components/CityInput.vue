@@ -51,8 +51,20 @@ export default {
         duration: 1,
         lon: 0,
         lat: 0,
+        country: "",
       },
     };
+  },
+  mounted() {
+    if (this.populate) {
+      const p = this.populate;
+      this.d.city = p.city;
+      this.d.arrival = p.arrival;
+      this.d.departure = p.departure;
+      this.d.duration = p.duration;
+      this.d.lon = p.lon;
+      this.d.lat = p.lat;
+    }
   },
   methods: {
     remove: function() {
@@ -62,29 +74,37 @@ export default {
       let arr = this.d.arrival || null;
       let dep = this.d.departure || null;
       let dur = this.d.duration || 1;
-      console.log(field + arr + dur + dep);
+
+      // update field is repeated below because in city it is async
       switch (field) {
         case "date":
           this.d.duration = moment(dep).diff(moment(arr), "days") || "";
-          this.$emit("update-field", { d: this.d, id: this.id });
+          this.$store.commit("updateField", { d: this.d, id: this.id });
           break;
         case "duration":
           this.d.departure = moment(arr)
             .add(dur, "days")
             .format("YYYY-MM-DD");
-          this.$emit("update-field", { d: this.d, id: this.id });
+          console.log(this.d);
+          this.$store.commit("updateField", { d: this.d, id: this.id });
           break;
         case "city":
+          console.log(this.d);
           this.findCoordinates(this.d.city).then((e) => {
+            console.log(e);
             this.d.lon = this.lonScale(e.lon);
             this.d.lat = this.latScale(e.lat);
-            console.log(this.d);
-            this.$emit("update-field", { d: this.d, id: this.id });
+            this.d.country = e.country;
+            this.$store.commit("updateField", { d: this.d, id: this.id });
           });
+          console.log(this.d);
+
           break;
         default:
           break;
       }
+
+      console.log("afterswitch");
     },
     latScale: function(coord) {
       let maxdeg = 90;
