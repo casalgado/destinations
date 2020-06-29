@@ -1,7 +1,17 @@
 <template>
   <tr>
     <td>
-      <input type="text" v-model="d.city" @change="onChange('city')" />
+      <input type="text" v-model="d.city" @change="onChange('location')" />
+    </td>
+    <td>
+      <input type="text" v-model="d.country" @change="onChange('location')" />
+      <!--
+      <select name="" v-model="d.country" @change="onChange('location')">
+        <option v-for="c in countries" :key="c.value" :value="c.value">
+          {{ c.text }}
+        </option>
+      </select>
+      -->
     </td>
     <td>
       <input type="date" v-model="d.arrival" @change="onChange('date')" />
@@ -36,6 +46,7 @@
 <script>
 import moment from "moment";
 import axios from "axios";
+import { countries } from "@/countries";
 export default {
   name: "CityInput",
   props: {
@@ -44,6 +55,7 @@ export default {
   },
   data() {
     return {
+      countries: [],
       d: {
         city: "",
         arrival: "",
@@ -62,9 +74,11 @@ export default {
       this.d.arrival = p.arrival;
       this.d.departure = p.departure;
       this.d.duration = p.duration;
+      this.d.country = p.country;
       this.d.lon = p.lon;
       this.d.lat = p.lat;
     }
+    this.countries = countries;
   },
   methods: {
     remove: function() {
@@ -74,7 +88,7 @@ export default {
       let arr = this.d.arrival || null;
       let dep = this.d.departure || null;
       let dur = this.d.duration || 1;
-
+      console.log(countries);
       // update field is repeated below because in city it is async
       switch (field) {
         case "date":
@@ -88,9 +102,9 @@ export default {
           console.log(this.d);
           this.$store.commit("updateField", { d: this.d, id: this.id });
           break;
-        case "city":
+        case "location":
           console.log(this.d);
-          this.findCoordinates(this.d.city).then((e) => {
+          this.findCoordinates(this.d.city, this.d.country).then((e) => {
             console.log(e);
             this.d.lon = this.lonScale(e.lon);
             this.d.lat = this.latScale(e.lat);
@@ -101,6 +115,7 @@ export default {
 
           break;
         default:
+          this.$store.commit("updateField", { d: this.d, id: this.id });
           break;
       }
 
@@ -126,7 +141,7 @@ export default {
         return maxpix - (Math.abs(coord) / maxdeg) * maxpix;
       }
     },
-    findCoordinates: function(city) {
+    findCoordinates: function(city, country) {
       return new Promise((resolve) => {
         axios({
           method: "GET",
@@ -140,6 +155,7 @@ export default {
           },
           params: {
             name: city,
+            country: country || null,
           },
         })
           .then((response) => {
@@ -161,8 +177,14 @@ export default {
 </script>
 
 <style scoped>
+::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+
 input {
   border: none;
+  background-color: var(--color-background);
+  color: var(--color-neutral);
 }
 
 input[type="text"],

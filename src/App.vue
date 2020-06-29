@@ -10,6 +10,14 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #313131;
+}
+
+:root {
+  --color-background: #202020;
+  --color-neutral: #eeeeee;
+}
+body {
+  color: var(--color-neutral);
+  background-color: var(--color-background);
 }
 </style>

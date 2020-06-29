@@ -9,52 +9,29 @@
           :cx="dest.lon"
           :cy="dest.lat"
           :r="dest.radius"
-          fill="blue"
+          fill="lightblue"
         />
       </svg>
     </div>
-    <div id="table-container">
-      <button @click="addField">
-        add destination
-      </button>
-      <button @click="save">
-        save
-      </button>
-      <table>
-        <tr>
-          <th>city</th>
-          <th>arrival</th>
-          <th>departure</th>
-          <th>duration</th>
-        </tr>
-        <CityInput
-          v-for="d in activeDestinations"
-          :key="d.id"
-          :id="d.id"
-          :populate="d"
-          @remove-field="removeField"
-        />
-      </table>
-    </div>
-    <div id="controls-container">
-      <p>controls</p>
-    </div>
-
+    <Controls />
+    <CityTable />
     <p>{{ activeDestinations }}</p>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import CityInput from "../components/CityInput.vue";
+import CityTable from "../components/CityTable.vue";
+import Controls from "../components/Controls.vue";
 
 export default {
   name: "Field",
-  components: { CityInput },
+  components: { CityTable, Controls },
   created() {
     if (localStorage.getItem("destinations")) {
       try {
         let destinations = JSON.parse(localStorage.getItem("destinations"));
+        console.log(destinations);
         this.$store.commit("loadState", destinations);
       } catch (e) {
         console.log(JSON.parse(localStorage.getItem("destinations")));
@@ -69,33 +46,9 @@ export default {
       return this.$store.getters.durations;
     },
   },
-  methods: {
-    addField() {
-      this.$store.commit("addField");
-    },
-    removeField(payload) {
-      this.$store.commit("removeField", payload);
-    },
-    save: function() {
-      const parsed = JSON.stringify(this.destinations);
-      localStorage.setItem("destinations", parsed);
-    },
-  },
 };
 </script>
 <style scoped>
-table,
-th {
-  border: 1px solid gray;
-  border-collapse: collapse;
-}
-table {
-  max-width: 500px;
-  margin: 0 auto;
-  border-right: none;
-  border-bottom: none;
-}
-
 #test {
   z-index: 999;
 }
@@ -122,9 +75,5 @@ table {
   position: absolute;
   top: 0;
   left: 0;
-}
-
-button {
-  margin: 10px;
 }
 </style>

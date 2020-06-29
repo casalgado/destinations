@@ -3,22 +3,23 @@ import Vuex from "vuex";
 
 Vue.use(Vuex);
 
+const defaultField = {
+  id: 0,
+  active: true,
+  hidden: false,
+  city: "",
+  arrival: "",
+  departure: "",
+  duration: 1,
+  radius: 1,
+  lat: 0,
+  lon: 0,
+  country: "",
+};
+
 export default new Vuex.Store({
   state: {
-    destinations: [
-      {
-        id: 0,
-        active: true,
-        city: "",
-        arrival: "",
-        departure: "",
-        duration: 1,
-        radius: 1,
-        lat: 0,
-        lon: 0,
-        country: "",
-      },
-    ],
+    destinations: [{ ...defaultField }],
   },
   getters: {
     activeDestinations: (state) => {
@@ -34,18 +35,9 @@ export default new Vuex.Store({
     },
     addField(state) {
       let id = state.destinations.length;
-      state.destinations.push({
-        id: id,
-        active: true,
-        city: "",
-        arrival: "",
-        departure: "",
-        duration: 1,
-        radius: 1,
-        lat: 0,
-        lon: 0,
-        country: "",
-      });
+      let newField = { ...defaultField };
+      newField.id = id;
+      state.destinations.push(newField);
     },
     removeField(state, payload) {
       state.destinations[payload.id].active = false;
@@ -59,6 +51,21 @@ export default new Vuex.Store({
       state.destinations[payload.id].lat = payload.d.lat;
       state.destinations[payload.id].lon = payload.d.lon;
       state.destinations[payload.id].country = payload.d.country;
+    },
+    sortBy(state, payload) {
+      let prop = payload.field;
+      function compare(a, b) {
+        if (a[prop] < b[prop]) {
+          let i = payload.direction ? -1 : 1;
+          return i;
+        }
+        if (a[prop] > b[prop]) {
+          let j = payload.direction ? 1 : -1;
+          return j;
+        }
+        return 0;
+      }
+      state.destinations = state.destinations.sort(compare);
     },
   },
   actions: {},
