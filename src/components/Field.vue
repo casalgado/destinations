@@ -13,20 +13,25 @@
         />
       </svg>
     </div>
-    <Controls />
+    <DurationsFilter />
     <CityTable />
-    <p>{{ activeDestinations }}</p>
+    <ul class="print">
+      <li v-for="a in activeDestinations" :key="a.id">{{ a }}</li>
+    </ul>
+    <ul class="print">
+      <li v-for="a in allDestinations" :key="a.id">{{ a }}</li>
+    </ul>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
 import CityTable from "../components/CityTable.vue";
-import Controls from "../components/Controls.vue";
+import DurationsFilter from "../components/DurationsFilter.vue";
 
 export default {
   name: "Field",
-  components: { CityTable, Controls },
+  components: { CityTable, DurationsFilter },
   created() {
     if (localStorage.getItem("destinations")) {
       try {
@@ -44,6 +49,9 @@ export default {
     },
     durations: function() {
       return this.$store.getters.durations;
+    },
+    allDestinations: function() {
+      return this.$store.state.destinations;
     },
   },
 };
@@ -75,5 +83,9 @@ export default {
   position: absolute;
   top: 0;
   left: 0;
+}
+
+.print {
+  margin-top: 25px;
 }
 </style>

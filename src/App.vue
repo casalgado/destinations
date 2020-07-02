@@ -20,4 +20,11 @@ body {
   color: var(--color-neutral);
   background-color: var(--color-background);
 }
+
+*:active,
+*:focus {
+  -moz-outline-style: none;
+  outline-style: none;
+  outline: none;
+}
 </style>

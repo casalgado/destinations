@@ -3,12 +3,22 @@
     <label for="durationFilter" id="dflabel"
       >Show me cities I have visited for:</label
     >
-    <select name="durationFilter" id="dfilter">
+    <select
+      name="durationFilter"
+      id="dfilter"
+      @change="applyFilter"
+      v-model="direction"
+    >
       <option v-for="o in filterOptions" :key="o.value" :value="o.value">
-        {{ o.value }}
+        {{ o.text }}
       </option>
     </select>
-    <select name="durationOptions" id="doptions">
+    <select
+      name="durationOptions"
+      id="doptions"
+      @change="applyFilter"
+      v-model="range"
+    >
       <option v-for="o in durationOptions" :key="o.value" :value="o.value">
         {{ o.text }}
       </option>
@@ -18,17 +28,27 @@
 
 <script>
 export default {
-  name: "Controls",
+  name: "DurationsFilter",
+  data() {
+    return {
+      direction: ">=",
+      range: 0,
+    };
+  },
   computed: {
+    activeDestinations: function() {
+      return this.$store.getters.activeDestinations;
+    },
     filterOptions: function() {
       return [
-        { value: "more than" },
-        { value: "less than" },
-        { value: "around" },
+        { value: ">=", text: "more than" },
+        { value: "<", text: "less than" },
+        { value: "=", text: "around" },
       ];
     },
     durationOptions: function() {
       return [
+        { value: 0, text: "..." },
         { value: 1, text: "1 day" },
         { value: 7, text: "1 week" },
         { value: 30, text: "1 month" },
@@ -40,6 +60,28 @@ export default {
         { value: 3650, text: "10 years" },
         { value: 7300, text: "20 years" },
       ];
+    },
+  },
+  methods: {
+    applyFilter: function() {
+      let shown;
+      switch (this.direction) {
+        case ">=":
+          shown = this.activeDestinations
+            .filter((e) => e.duration >= this.range)
+            .map((e) => e.id);
+          break;
+        case "<":
+          shown = this.activeDestinations
+            .filter((e) => e.duration < this.range)
+            .map((e) => e.id);
+          break;
+
+        default:
+          break;
+      }
+
+      this.$store.commit("showOnly", shown);
     },
   },
 };

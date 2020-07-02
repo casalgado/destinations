@@ -40,7 +40,7 @@ export default new Vuex.Store({
       state.destinations.push(newField);
     },
     removeField(state, payload) {
-      state.destinations[payload.id].active = false;
+      state.destinations.find((e) => e.id === payload.id).active = false;
     },
     updateField(state, payload) {
       state.destinations[payload.id].city = payload.d.city;
@@ -55,6 +55,10 @@ export default new Vuex.Store({
     sortBy(state, payload) {
       let prop = payload.field;
       function compare(a, b) {
+        if (!isNaN(parseInt(a[prop]))) {
+          a[prop] = parseInt(a[prop]);
+          b[prop] = parseInt(b[prop]);
+        }
         if (a[prop] < b[prop]) {
           let i = payload.direction ? -1 : 1;
           return i;
@@ -66,6 +70,15 @@ export default new Vuex.Store({
         return 0;
       }
       state.destinations = state.destinations.sort(compare);
+    },
+    showOnly(state, payload) {
+      state.destinations.forEach((e) => {
+        if (payload.includes(e.id)) {
+          e.radius = 8;
+        } else {
+          e.radius = 2;
+        }
+      });
     },
   },
   actions: {},
