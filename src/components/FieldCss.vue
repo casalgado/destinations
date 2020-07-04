@@ -2,14 +2,16 @@
   <div class="field">
     <div id="map-container">
       <img id="map-background" src="@/assets/world.svg" alt="" />
-      <svg id="map">
+
+      <div id="map">
         <Pointer
           v-for="dest in activeDestinations"
           :key="dest.id"
           :destination="dest"
         />
-      </svg>
+      </div>
     </div>
+    <button @click="animate">animate</button>
     <DurationsFilter />
     <CityTable />
     <ul class="print">
@@ -23,7 +25,8 @@
 
 <script>
 // @ is an alias to /src
-
+import { gsap } from "gsap";
+import { mapState } from "vuex";
 import Pointer from "../components/Pointer.vue";
 import CityTable from "../components/CityTable.vue";
 import DurationsFilter from "../components/DurationsFilter.vue";
@@ -35,7 +38,6 @@ export default {
     if (localStorage.getItem("destinations")) {
       try {
         let destinations = JSON.parse(localStorage.getItem("destinations"));
-        console.log(destinations);
         this.$store.commit("loadState", destinations);
       } catch (e) {
         console.log(JSON.parse(localStorage.getItem("destinations")));
@@ -52,12 +54,40 @@ export default {
     allDestinations: function() {
       return this.$store.state.destinations;
     },
+    ...mapState(["showOnly"]),
+  },
+  methods: {
+    animate: function() {
+      console.log(this.showOnly);
+      this.activeDestinations.forEach((d) => {
+        if (this.showOnly.includes(d.id)) {
+          gsap.to(`#id${d.id}`, {
+            duration: 5,
+            ease: "easeInOut",
+            width: "8",
+            height: "8",
+            left: "-=4",
+            top: "-=4",
+          });
+        }
+      });
+    },
   },
 };
 </script>
 <style scoped>
 #test {
   z-index: 999;
+}
+
+#tanim {
+  position: absolute;
+  top: 200px;
+  left: 400px;
+  background-color: red;
+  width: 100px;
+  height: 100px;
+  border-radius: 999px;
 }
 
 #map-container {

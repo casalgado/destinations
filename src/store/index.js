@@ -20,6 +20,7 @@ const defaultField = {
 export default new Vuex.Store({
   state: {
     destinations: [{ ...defaultField }],
+    showOnly: "",
   },
   getters: {
     activeDestinations: (state) => {
@@ -72,13 +73,7 @@ export default new Vuex.Store({
       state.destinations = state.destinations.sort(compare);
     },
     showOnly(state, payload) {
-      state.destinations.forEach((e) => {
-        if (payload.includes(e.id)) {
-          e.radius = 8;
-        } else {
-          e.radius = 2;
-        }
-      });
+      state.showOnly = payload;
     },
   },
   actions: {},
