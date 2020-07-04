@@ -20,7 +20,8 @@ const defaultField = {
 export default new Vuex.Store({
   state: {
     destinations: [{ ...defaultField }],
-    showOnly: "",
+    showOnly: [],
+    animationDuration: 0.8,
   },
   getters: {
     activeDestinations: (state) => {

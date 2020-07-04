@@ -20,20 +20,20 @@ export default {
     duration: function() {
       return this.destination.radius;
     },
-    ...mapState(["showOnly"]),
+    ...mapState(["showOnly", "animationDuration"]),
   },
   watch: {
     showOnly() {
       const { pointer } = this.$refs;
       if (this.showOnly.includes(this.destination.id)) {
         gsap.to(pointer, {
-          duration: 5,
+          duration: this.animationDuration,
           attr: { r: 8 },
-          ease: "easeIn",
+          ease: "back",
         });
       } else {
         gsap.to(pointer, {
-          duration: 5,
+          duration: this.animationDuration,
           attr: { r: 2 },
           ease: "easeIn",
         });
