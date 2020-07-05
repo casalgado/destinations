@@ -29,13 +29,13 @@ export default {
         gsap.to(pointer, {
           duration: this.animationDuration,
           attr: { r: 8 },
-          ease: "back",
+          ease: "elastic",
         });
       } else {
         gsap.to(pointer, {
           duration: this.animationDuration,
           attr: { r: 2 },
-          ease: "easeIn",
+          ease: "expo",
         });
       }
     },

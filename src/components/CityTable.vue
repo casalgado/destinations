@@ -74,7 +74,6 @@ th {
   border-collapse: collapse;
 }
 table {
-  max-width: 500px;
   margin: 0 auto;
   border-right: none;
   border-bottom: none;

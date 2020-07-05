@@ -93,6 +93,7 @@ export default {
 }
 
 select {
+  -webkit-appearance: button;
   background-color: var(--color-background);
   color: var(--color-neutral);
   font-family: Avenir, Helvetica, Arial, sans-serif;
