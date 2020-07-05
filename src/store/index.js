@@ -45,14 +45,15 @@ export default new Vuex.Store({
       state.destinations.find((e) => e.id === payload.id).active = false;
     },
     updateField(state, payload) {
-      state.destinations[payload.id].city = payload.d.city;
-      state.destinations[payload.id].arrival = payload.d.arrival;
-      state.destinations[payload.id].departure = payload.d.departure;
-      state.destinations[payload.id].radius = payload.d.radius || 3;
-      state.destinations[payload.id].duration = payload.d.duration;
-      state.destinations[payload.id].lat = payload.d.lat;
-      state.destinations[payload.id].lon = payload.d.lon;
-      state.destinations[payload.id].country = payload.d.country;
+      let destination = state.destinations.find((e) => e.id === payload.id);
+      destination.city = payload.d.city;
+      destination.arrival = payload.d.arrival;
+      destination.departure = payload.d.departure;
+      destination.radius = payload.d.radius || 3;
+      destination.duration = payload.d.duration;
+      destination.lat = payload.d.lat;
+      destination.lon = payload.d.lon;
+      destination.country = payload.d.country;
     },
     sortBy(state, payload) {
       let prop = payload.field;

@@ -88,7 +88,6 @@ export default {
       let arr = this.d.arrival || null;
       let dep = this.d.departure || null;
       let dur = this.d.duration || 1;
-      console.log(countries);
       // update field is repeated below because in city it is async
       switch (field) {
         case "date":
@@ -99,11 +98,9 @@ export default {
           this.d.departure = moment(arr)
             .add(dur, "days")
             .format("YYYY-MM-DD");
-          console.log(this.d);
           this.$store.commit("updateField", { d: this.d, id: this.id });
           break;
         case "location":
-          console.log(this.d);
           this.findCoordinates(this.d.city, this.d.country).then((e) => {
             console.log(e);
             this.d.lon = this.lonScale(e.lon);
@@ -111,15 +108,11 @@ export default {
             this.d.country = e.country;
             this.$store.commit("updateField", { d: this.d, id: this.id });
           });
-          console.log(this.d);
-
           break;
         default:
           this.$store.commit("updateField", { d: this.d, id: this.id });
           break;
       }
-
-      console.log("afterswitch");
     },
     latScale: function(coord) {
       let maxdeg = 90;

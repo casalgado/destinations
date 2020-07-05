@@ -11,6 +11,7 @@
       </svg>
     </div>
     <DurationsFilter />
+    <ShowAnimation />
     <CityTable />
     <ul class="print">
       <li v-for="a in activeDestinations" :key="a.id">{{ a }}</li>
@@ -22,15 +23,15 @@
 </template>
 
 <script>
-// @ is an alias to /src
-
 import Pointer from "../components/Pointer.vue";
 import CityTable from "../components/CityTable.vue";
+// below are components that go in 'controls'
+import ShowAnimation from "../components/ShowAnimation.vue";
 import DurationsFilter from "../components/DurationsFilter.vue";
 
 export default {
   name: "Field",
-  components: { CityTable, DurationsFilter, Pointer },
+  components: { CityTable, DurationsFilter, Pointer, ShowAnimation },
   created() {
     if (localStorage.getItem("destinations")) {
       try {
