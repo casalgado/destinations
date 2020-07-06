@@ -20,7 +20,35 @@ export default {
     duration: function() {
       return this.destination.radius;
     },
-    ...mapState(["showOnly", "animationDuration"]),
+    colorScaling: function() {
+      return this.scaling.color;
+    },
+    sizeScaling: function() {
+      console.log(this.scaling.size);
+      return this.scaling.size;
+    },
+    ...mapState([
+      "maxRadius",
+      "minRadius",
+      "showOnly",
+      "animationDuration",
+      "scaling",
+    ]),
+  },
+  methods: {
+    getScaledRadius: function(duration) {
+      let Rmax = this.maxRadius;
+      let Rmin = this.minRadius;
+      let Dmax = this.scaling.Dmax;
+      let Dmin = this.scaling.Dmin;
+      if (this.sizeScaling) {
+        // linear squishing
+        let newR = Rmin + (Rmax - Rmin) * ((duration - Dmin) / (Dmax - Dmin));
+        return newR;
+      } else {
+        return Rmin;
+      }
+    },
   },
   watch: {
     showOnly() {
@@ -38,6 +66,16 @@ export default {
           ease: "expo",
         });
       }
+    },
+    sizeScaling() {
+      const { pointer } = this.$refs;
+      let newR = this.getScaledRadius(this.destination.duration);
+      console.log(newR);
+      gsap.to(pointer, {
+        duration: this.animationDuration,
+        attr: { r: newR },
+        ease: "easeOut",
+      });
     },
   },
 };

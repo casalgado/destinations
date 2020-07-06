@@ -1,6 +1,6 @@
 <template>
   <div id="table-container">
-    <button @click="addField">
+    <button @click="addDestination">
       add destination
     </button>
     <button @click="save">
@@ -19,7 +19,7 @@
         :key="d.id"
         :id="d.id"
         :populate="d"
-        @remove-field="removeField"
+        @remove-field="removeDestination"
       />
     </table>
   </div>
@@ -46,11 +46,11 @@ export default {
     },
   },
   methods: {
-    addField() {
-      this.$store.commit("addField");
+    addDestination() {
+      this.$store.commit("addDestination");
     },
-    removeField(payload) {
-      this.$store.commit("removeField", payload);
+    removeDestination(payload) {
+      this.$store.commit("removeDestination", payload);
     },
     save: function() {
       const parsed = JSON.stringify(this.activeDestinations);

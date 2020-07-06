@@ -3,7 +3,7 @@ import Vuex from "vuex";
 
 Vue.use(Vuex);
 
-const defaultField = {
+const emptyDestination = {
   id: 0,
   active: true,
   hidden: false,
@@ -19,11 +19,17 @@ const defaultField = {
 
 export default new Vuex.Store({
   state: {
-    destinations: [{ ...defaultField }],
+    destinations: [{ ...emptyDestination }],
     showOnly: [],
     animationDuration: 0.8,
     maxRadius: 10,
     minRadius: 3,
+    scaling: {
+      color: false,
+      size: false,
+      Dmax: 0,
+      Dmin: 0,
+    },
   },
   getters: {
     activeDestinations: (state) => {
@@ -37,21 +43,21 @@ export default new Vuex.Store({
     loadState(state, payload) {
       state.destinations = payload;
     },
-    addField(state) {
+    addDestination(state) {
       let id = state.destinations.length;
-      let newField = { ...defaultField };
+      let newField = { ...emptyDestination };
       newField.id = id;
       state.destinations.push(newField);
     },
-    removeField(state, payload) {
+    removeDestination(state, payload) {
       state.destinations.find((e) => e.id === payload.id).active = false;
     },
-    updateField(state, payload) {
+    updateDestination(state, payload) {
       let destination = state.destinations.find((e) => e.id === payload.id);
       destination.city = payload.d.city || destination.city;
       destination.arrival = payload.d.arrival || destination.arrival;
       destination.departure = payload.d.departure || destination.departure;
-      destination.radius = payload.d.radius || destination.radius || 2;
+      destination.radius = payload.d.radius || destination.radius;
       destination.duration = payload.d.duration || destination.duration;
       destination.lat = payload.d.lat || destination.lat;
       destination.lon = payload.d.lon || destination.lon;
@@ -78,6 +84,14 @@ export default new Vuex.Store({
     },
     showOnly(state, payload) {
       state.showOnly = payload;
+    },
+    scalingProps(state, payload) {
+      let props = {};
+      props.color = payload.color;
+      props.size = payload.size;
+      props.Dmax = payload.Dmax;
+      props.Dmin = payload.Dmin;
+      state.scaling = { ...props };
     },
   },
   actions: {},

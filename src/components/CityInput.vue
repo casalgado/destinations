@@ -92,13 +92,13 @@ export default {
       switch (field) {
         case "date":
           this.d.duration = moment(dep).diff(moment(arr), "days") || "";
-          this.$store.commit("updateField", { d: this.d, id: this.id });
+          this.$store.commit("updateDestination", { d: this.d, id: this.id });
           break;
         case "duration":
           this.d.departure = moment(arr)
             .add(dur, "days")
             .format("YYYY-MM-DD");
-          this.$store.commit("updateField", { d: this.d, id: this.id });
+          this.$store.commit("updateDestination", { d: this.d, id: this.id });
           break;
         case "location":
           this.findCoordinates(this.d.city, this.d.country).then((e) => {
@@ -106,11 +106,11 @@ export default {
             this.d.lon = this.lonScale(e.lon);
             this.d.lat = this.latScale(e.lat);
             this.d.country = e.country;
-            this.$store.commit("updateField", { d: this.d, id: this.id });
+            this.$store.commit("updateDestination", { d: this.d, id: this.id });
           });
           break;
         default:
-          this.$store.commit("updateField", { d: this.d, id: this.id });
+          this.$store.commit("updateDestination", { d: this.d, id: this.id });
           break;
       }
     },
