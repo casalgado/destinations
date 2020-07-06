@@ -11,6 +11,7 @@
       </svg>
     </div>
     <DurationsFilter />
+    <DurationsScaling />
     <ShowAnimation />
     <CityTable />
     <ul class="print">
@@ -28,10 +29,17 @@ import CityTable from "../components/CityTable.vue";
 // below are components that go in 'controls'
 import ShowAnimation from "../components/ShowAnimation.vue";
 import DurationsFilter from "../components/DurationsFilter.vue";
+import DurationsScaling from "../components/DurationsScaling.vue";
 
 export default {
   name: "Field",
-  components: { CityTable, DurationsFilter, Pointer, ShowAnimation },
+  components: {
+    CityTable,
+    DurationsFilter,
+    Pointer,
+    ShowAnimation,
+    DurationsScaling,
+  },
   created() {
     if (localStorage.getItem("destinations")) {
       try {

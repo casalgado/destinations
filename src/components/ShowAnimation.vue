@@ -9,6 +9,7 @@ export default {
   data() {
     return {
       btnText: "animate",
+      active: true,
     };
   },
   computed: {
@@ -24,10 +25,6 @@ export default {
   methods: {
     animate: function() {
       // hide all destinations
-      let shown = [];
-      this.$store.commit("showOnly", shown);
-      // find earliest arrival date to set as start of animation
-      let today = moment().format("YYYY-MM-DD");
       function getMin(min, current) {
         if (min < current) {
           return min;
@@ -35,34 +32,43 @@ export default {
           return current;
         }
       }
-      let earliestArrival = this.arrivals
-        .map((e) => e.arrival)
-        .reduce(getMin, today);
-      // set animation to start 6 months before earliest arrival
-      let current = moment(earliestArrival).subtract(6, "months");
+      if (this.active) {
+        this.active = false;
+        let shown = [];
+        this.$store.commit("showOnly", shown);
+        // find earliest arrival date to set as start of animation
+        let today = moment().format("YYYY-MM-DD");
 
-      // set period per interval iteration
-      let period = "month";
-      // set seconds per interval iteration
-      let seconds = 200;
-      // create interval
-      let int = setInterval(
-        function() {
-          this.btnText = current.format("MMM YYYY");
-          this.arrivals.forEach((e) => {
-            if (e.arrival.isSame(current, period)) {
-              shown.push(e.id);
-              this.$store.commit("showOnly", shown);
+        let earliestArrival = this.arrivals
+          .map((e) => e.arrival)
+          .reduce(getMin, today);
+        // set animation to start 6 months before earliest arrival
+        let current = moment(earliestArrival).subtract(6, "months");
+
+        // set period per interval iteration
+        let period = "month";
+        // set seconds per interval iteration
+        let seconds = 200;
+        // create interval
+        let int = setInterval(
+          function() {
+            this.btnText = current.format("MMM YYYY");
+            this.arrivals.forEach((e) => {
+              if (e.arrival.isSame(current, period)) {
+                shown.push(e.id);
+                this.$store.commit("showOnly", shown);
+              }
+            });
+            if (current.isSame(today, period)) {
+              this.btnText = "again!";
+              this.active = true;
+              clearInterval(int);
             }
-          });
-          if (current.isSame(today, period)) {
-            clearInterval(int);
-            this.btnText = "again!";
-          }
-          current = current.add(1, period);
-        }.bind(this),
-        seconds
-      );
+            current = current.add(1, period);
+          }.bind(this),
+          seconds
+        );
+      }
     },
   },
 };

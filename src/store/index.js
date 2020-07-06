@@ -11,7 +11,7 @@ const defaultField = {
   arrival: "",
   departure: "",
   duration: 1,
-  radius: 1,
+  radius: 3,
   lat: 0,
   lon: 0,
   country: "",
@@ -22,6 +22,8 @@ export default new Vuex.Store({
     destinations: [{ ...defaultField }],
     showOnly: [],
     animationDuration: 0.8,
+    maxRadius: 10,
+    minRadius: 3,
   },
   getters: {
     activeDestinations: (state) => {
@@ -46,19 +48,19 @@ export default new Vuex.Store({
     },
     updateField(state, payload) {
       let destination = state.destinations.find((e) => e.id === payload.id);
-      destination.city = payload.d.city;
-      destination.arrival = payload.d.arrival;
-      destination.departure = payload.d.departure;
-      destination.radius = payload.d.radius || 3;
-      destination.duration = payload.d.duration;
-      destination.lat = payload.d.lat;
-      destination.lon = payload.d.lon;
-      destination.country = payload.d.country;
+      destination.city = payload.d.city || destination.city;
+      destination.arrival = payload.d.arrival || destination.arrival;
+      destination.departure = payload.d.departure || destination.departure;
+      destination.radius = payload.d.radius || destination.radius || 2;
+      destination.duration = payload.d.duration || destination.duration;
+      destination.lat = payload.d.lat || destination.lat;
+      destination.lon = payload.d.lon || destination.lon;
+      destination.country = payload.d.country || destination.country;
     },
     sortBy(state, payload) {
       let prop = payload.field;
       function compare(a, b) {
-        if (!isNaN(parseInt(a[prop]))) {
+        if (a[prop] == parseInt(a[prop])) {
           a[prop] = parseInt(a[prop]);
           b[prop] = parseInt(b[prop]);
         }

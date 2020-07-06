@@ -1,7 +1,7 @@
 <template>
   <form>
     <label for="durationFilter" id="dflabel"
-      >Show me cities I have visited for:</label
+      >Show me destinations I have visited for:</label
     >
     <select
       name="durationFilter"
