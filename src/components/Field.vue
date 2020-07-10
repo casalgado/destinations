@@ -12,7 +12,8 @@
     </div>
     <DurationsFilter />
     <DurationsScaling />
-    <ShowAnimation />
+    <Animation />
+    <Save />
     <CityTable />
     <ul class="print">
       <li v-for="a in activeDestinations" :key="a.id">{{ a }}</li>
@@ -25,9 +26,10 @@
 
 <script>
 import Pointer from "../components/Pointer.vue";
+import Save from "../components/buttons/Save.vue";
 import CityTable from "../components/CityTable.vue";
 // below are components that go in 'controls'
-import ShowAnimation from "../components/ShowAnimation.vue";
+import Animation from "../components/buttons/Animation.vue";
 import DurationsFilter from "../components/DurationsFilter.vue";
 import DurationsScaling from "../components/DurationsScaling.vue";
 
@@ -37,8 +39,9 @@ export default {
     CityTable,
     DurationsFilter,
     Pointer,
-    ShowAnimation,
+    Animation,
     DurationsScaling,
+    Save,
   },
   created() {
     if (localStorage.getItem("destinations")) {

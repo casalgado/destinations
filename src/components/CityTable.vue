@@ -3,9 +3,6 @@
     <button @click="addDestination">
       add destination
     </button>
-    <button @click="save">
-      save
-    </button>
     <table>
       <tr>
         <th @click="sortBy('city')">city</th>
@@ -42,6 +39,8 @@ export default {
   },
   computed: {
     activeDestinations: function() {
+      this.$store.state.refresh;
+      console.log("active");
       return this.$store.getters.activeDestinations;
     },
   },
@@ -51,10 +50,6 @@ export default {
     },
     removeDestination(payload) {
       this.$store.commit("removeDestination", payload);
-    },
-    save: function() {
-      const parsed = JSON.stringify(this.activeDestinations);
-      localStorage.setItem("destinations", parsed);
     },
     sortBy: function(field) {
       this.direction[field] = !this.direction[field];

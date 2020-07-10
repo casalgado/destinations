@@ -139,7 +139,6 @@ export default {
     recolor() {
       const { pointer } = this.$refs;
       let newC = this.getScaledColor(this.destination.duration);
-      console.log(`newC in recolor: ${newC}`);
       gsap.to(pointer, {
         duration: 2,
         attr: { fill: newC },

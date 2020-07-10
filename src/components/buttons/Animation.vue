@@ -5,7 +5,7 @@
 <script>
 import moment from "moment";
 export default {
-  name: "ShowAnimation",
+  name: "Animation",
   data() {
     return {
       btnText: "animate",

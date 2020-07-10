@@ -1,5 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import axios from "axios";
 
 Vue.use(Vuex);
 
@@ -16,6 +17,28 @@ const emptyDestination = {
   lon: 0,
   country: "",
 };
+
+function latScale(coord) {
+  let maxdeg = 90;
+  let maxpix = 300;
+  coord = parseFloat(coord);
+  if (coord < 0) {
+    return maxpix + (Math.abs(coord) / maxdeg) * maxpix;
+  } else {
+    return maxpix - (coord / maxdeg) * maxpix;
+  }
+}
+
+function lonScale(coord) {
+  let maxdeg = 180;
+  let maxpix = 600;
+  coord = parseFloat(coord);
+  if (coord > 0) {
+    return maxpix + (coord / maxdeg) * maxpix;
+  } else {
+    return maxpix - (Math.abs(coord) / maxdeg) * maxpix;
+  }
+}
 
 export default new Vuex.Store({
   state: {
@@ -34,6 +57,7 @@ export default new Vuex.Store({
       Dmax: 0,
       Dmin: 0,
     },
+    refresh: true,
   },
   getters: {
     activeDestinations: (state) => {
@@ -41,6 +65,9 @@ export default new Vuex.Store({
     },
     durations: (state, getters) => {
       return getters.activeDestinations.map((d) => parseInt(d.duration));
+    },
+    destination: (state) => (id) => {
+      return state.destinations.find((d) => d.id === id);
     },
   },
   mutations: {
@@ -57,15 +84,12 @@ export default new Vuex.Store({
       state.destinations.find((e) => e.id === payload.id).active = false;
     },
     updateDestination(state, payload) {
-      let destination = state.destinations.find((e) => e.id === payload.id);
-      destination.city = payload.d.city || destination.city;
-      destination.arrival = payload.d.arrival || destination.arrival;
-      destination.departure = payload.d.departure || destination.departure;
-      destination.radius = payload.d.radius || destination.radius;
-      destination.duration = payload.d.duration || destination.duration;
-      destination.lat = payload.d.lat || destination.lat;
-      destination.lon = payload.d.lon || destination.lon;
-      destination.country = payload.d.country || destination.country;
+      state.destinations.forEach((e) => {
+        if (e.id === payload.id) {
+          console.log(payload);
+          Object.assign(e, payload);
+        }
+      });
     },
     sortBy(state, payload) {
       let prop = payload.field;
@@ -112,6 +136,57 @@ export default new Vuex.Store({
       state.scaling.Dmin = Dmin;
     },
   },
-  actions: {},
+  actions: {
+    update({ dispatch, commit, getters }, destination) {
+      let current = getters.destination(destination.id);
+      if (
+        current.city !== destination.city ||
+        current.country !== destination.country
+      ) {
+        dispatch("findCoordinates", {
+          city: destination.city,
+          country: destination.country,
+        }).then((e) => {
+          console.log("inside");
+          e.lat = latScale(e.lat);
+          e.lon = lonScale(e.lon);
+          destination.country = e.country;
+          destination.lat = e.lat;
+          destination.lon = e.lon;
+          commit("updateDestination", destination);
+        });
+      } else {
+        console.log("outside");
+        commit("updateDestination", destination);
+        commit("setDmaxDmin");
+      }
+    },
+    findCoordinates({ state }, place) {
+      console.time(state);
+      return new Promise((resolve) => {
+        axios({
+          method: "GET",
+          url: "https://opentripmap-places-v1.p.rapidapi.com/en/places/geoname",
+          headers: {
+            "content-type": "application/octet-stream",
+            "x-rapidapi-host": "opentripmap-places-v1.p.rapidapi.com",
+            "x-rapidapi-key":
+              "a4155f4872msh83b76cd21659288p1f840fjsnae620982cab8",
+            useQueryString: true,
+          },
+          params: {
+            name: place.city,
+            country: place.country || null,
+          },
+        })
+          .then((response) => {
+            resolve(response.data);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      });
+    },
+  },
   modules: {},
 });

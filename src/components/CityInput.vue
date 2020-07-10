@@ -65,59 +65,44 @@ export default {
         lat: 0,
         country: "",
       },
-      scaling: {
-        Dmax: 0,
-        Dmin: 0,
-      },
     };
   },
   mounted() {
     if (this.populate) {
-      const p = this.populate;
-      this.d.city = p.city;
-      this.d.arrival = p.arrival;
-      this.d.departure = p.departure;
-      this.d.duration = p.duration;
-      this.d.country = p.country;
-      this.d.lon = p.lon;
-      this.d.lat = p.lat;
+      this.d = { ...this.populate };
     }
     this.countries = countries;
+  },
+  computed: {
+    thisDestination: function() {
+      return { ...this.$store.getters.destination(this.id) };
+    },
+  },
+  watch: {
+    thisDestination() {
+      this.d = this.thisDestination;
+    },
   },
   methods: {
     remove: function() {
       this.$emit("remove-field", { id: this.id });
     },
     onChange: function(field) {
-      let arr = this.d.arrival || null;
-      let dep = this.d.departure || null;
-      let dur = this.d.duration || 1;
-      // update field is repeated below because in city it is async
+      let updated = { ...this.d };
       switch (field) {
         case "date":
-          this.d.duration = moment(dep).diff(moment(arr), "days") || "";
-          this.$store.commit("updateDestination", { d: this.d, id: this.id });
+          updated.duration =
+            moment(this.d.departure).diff(moment(this.d.arrival), "days") || "";
           break;
         case "duration":
-          this.d.departure = moment(arr)
-            .add(dur, "days")
+          updated.departure = moment(this.d.arrival)
+            .add(this.d.duration, "days")
             .format("YYYY-MM-DD");
-          this.$store.commit("updateDestination", { d: this.d, id: this.id });
-          this.$store.commit("setDmaxDmin");
-          break;
-        case "location":
-          this.findCoordinates(this.d.city, this.d.country).then((e) => {
-            console.log(e);
-            this.d.lon = this.lonScale(e.lon);
-            this.d.lat = this.latScale(e.lat);
-            this.d.country = e.country;
-            this.$store.commit("updateDestination", { d: this.d, id: this.id });
-          });
           break;
         default:
-          this.$store.commit("updateDestination", { d: this.d, id: this.id });
           break;
       }
+      this.$store.dispatch("update", updated);
     },
     latScale: function(coord) {
       let maxdeg = 90;
