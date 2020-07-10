@@ -65,6 +65,10 @@ export default {
         lat: 0,
         country: "",
       },
+      scaling: {
+        Dmax: 0,
+        Dmin: 0,
+      },
     };
   },
   mounted() {
@@ -99,6 +103,7 @@ export default {
             .add(dur, "days")
             .format("YYYY-MM-DD");
           this.$store.commit("updateDestination", { d: this.d, id: this.id });
+          this.$store.commit("setDmaxDmin");
           break;
         case "location":
           this.findCoordinates(this.d.city, this.d.country).then((e) => {

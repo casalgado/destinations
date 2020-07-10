@@ -11,7 +11,7 @@ const emptyDestination = {
   arrival: "",
   departure: "",
   duration: 1,
-  radius: 3,
+  radius: 10,
   lat: 0,
   lon: 0,
   country: "",
@@ -22,8 +22,12 @@ export default new Vuex.Store({
     destinations: [{ ...emptyDestination }],
     showOnly: [],
     animationDuration: 0.8,
-    maxRadius: 10,
-    minRadius: 3,
+    maxRadius: 20,
+    minRadius: 5,
+    maxColor: "rgb(176,0,0)",
+    minColor: "rgb(254,255,0)",
+    defaultColor: "rgb(63,111,222)",
+    colorScalingAlgorithm: "",
     scaling: {
       color: false,
       size: false,
@@ -92,6 +96,20 @@ export default new Vuex.Store({
       props.Dmax = payload.Dmax;
       props.Dmin = payload.Dmin;
       state.scaling = { ...props };
+    },
+    setDmaxDmin(state) {
+      let Dmax = Math.max(
+        ...state.destinations
+          .filter((d) => d.active)
+          .map((e) => parseInt(e.duration))
+      );
+      let Dmin = Math.min(
+        ...state.destinations
+          .filter((d) => d.active)
+          .map((e) => parseInt(e.duration))
+      );
+      state.scaling.Dmax = Dmax;
+      state.scaling.Dmin = Dmin;
     },
   },
   actions: {},
