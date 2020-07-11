@@ -86,7 +86,6 @@ export default new Vuex.Store({
     updateDestination(state, payload) {
       state.destinations.forEach((e) => {
         if (e.id === payload.id) {
-          console.log(payload);
           Object.assign(e, payload);
         }
       });
@@ -137,7 +136,7 @@ export default new Vuex.Store({
     },
   },
   actions: {
-    update({ dispatch, commit, getters }, destination) {
+    UpdateDestination({ dispatch, commit, getters }, destination) {
       let current = getters.destination(destination.id);
       if (
         current.city !== destination.city ||
@@ -147,16 +146,12 @@ export default new Vuex.Store({
           city: destination.city,
           country: destination.country,
         }).then((e) => {
-          console.log("inside");
-          e.lat = latScale(e.lat);
-          e.lon = lonScale(e.lon);
           destination.country = e.country;
-          destination.lat = e.lat;
-          destination.lon = e.lon;
+          destination.lat = latScale(e.lat);
+          destination.lon = lonScale(e.lon);
           commit("updateDestination", destination);
         });
       } else {
-        console.log("outside");
         commit("updateDestination", destination);
         commit("setDmaxDmin");
       }

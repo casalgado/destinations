@@ -1,14 +1,14 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import Field from "../components/Field.vue";
+import Dashboard from "../components/Dashboard.vue";
 
 Vue.use(VueRouter);
 
 const routes = [
   {
     path: "/",
-    name: "Field",
-    component: Field,
+    name: "Dashboard",
+    component: Dashboard,
   },
   {
     path: "/about",

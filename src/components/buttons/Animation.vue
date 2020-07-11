@@ -24,7 +24,7 @@ export default {
   },
   methods: {
     animate: function() {
-      // hide all destinations
+      // function declaration to be used below
       function getMin(min, current) {
         if (min < current) {
           return min;
@@ -32,19 +32,21 @@ export default {
           return current;
         }
       }
+
       if (this.active) {
+        // deactivate button while animation is running
         this.active = false;
+        // hide all destinations
         let shown = [];
         this.$store.commit("showOnly", shown);
         // find earliest arrival date to set as start of animation
-        let today = moment().format("YYYY-MM-DD");
-
         let earliestArrival = this.arrivals
           .map((e) => e.arrival)
           .reduce(getMin, today);
         // set animation to start 6 months before earliest arrival
         let current = moment(earliestArrival).subtract(6, "months");
-
+        // get today's date to end animation
+        let today = moment().format("YYYY-MM-DD");
         // set period per interval iteration
         let period = "month";
         // set seconds per interval iteration

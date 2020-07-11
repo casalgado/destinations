@@ -45,10 +45,9 @@
 
 <script>
 import moment from "moment";
-import axios from "axios";
 import { countries } from "@/countries";
 export default {
-  name: "CityInput",
+  name: "InputRow",
   props: {
     id: Number,
     populate: Object,
@@ -85,7 +84,7 @@ export default {
   },
   methods: {
     remove: function() {
-      this.$emit("remove-field", { id: this.id });
+      this.$store.commit("removeDestination", { id: this.id });
     },
     onChange: function(field) {
       let updated = { ...this.d };
@@ -102,58 +101,7 @@ export default {
         default:
           break;
       }
-      this.$store.dispatch("update", updated);
-    },
-    latScale: function(coord) {
-      let maxdeg = 90;
-      let maxpix = 300;
-      coord = parseFloat(coord);
-      if (coord < 0) {
-        return maxpix + (Math.abs(coord) / maxdeg) * maxpix;
-      } else {
-        return maxpix - (coord / maxdeg) * maxpix;
-      }
-    },
-    lonScale: function(coord) {
-      let maxdeg = 180;
-      let maxpix = 600;
-      coord = parseFloat(coord);
-      if (coord > 0) {
-        return maxpix + (coord / maxdeg) * maxpix;
-      } else {
-        return maxpix - (Math.abs(coord) / maxdeg) * maxpix;
-      }
-    },
-    findCoordinates: function(city, country) {
-      return new Promise((resolve) => {
-        axios({
-          method: "GET",
-          url: "https://opentripmap-places-v1.p.rapidapi.com/en/places/geoname",
-          headers: {
-            "content-type": "application/octet-stream",
-            "x-rapidapi-host": "opentripmap-places-v1.p.rapidapi.com",
-            "x-rapidapi-key":
-              "a4155f4872msh83b76cd21659288p1f840fjsnae620982cab8",
-            useQueryString: true,
-          },
-          params: {
-            name: city,
-            country: country || null,
-          },
-        })
-          .then((response) => {
-            let r = response.data;
-            let obj = {
-              lat: r.lat,
-              lon: r.lon,
-              country: r.country,
-            };
-            resolve(obj);
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      });
+      this.$store.dispatch("UpdateDestination", updated);
     },
   },
 };

@@ -11,21 +11,20 @@
         <th @click="sortBy('departure')">departure</th>
         <th @click="sortBy('duration')">duration</th>
       </tr>
-      <CityInput
+      <InputRow
         v-for="d in activeDestinations"
         :key="d.id"
         :id="d.id"
         :populate="d"
-        @remove-field="removeDestination"
       />
     </table>
   </div>
 </template>
 <script>
-import CityInput from "../components/CityInput";
+import InputRow from "./InputRow";
 export default {
-  name: "CityTable",
-  components: { CityInput },
+  name: "Table",
+  components: { InputRow },
   data() {
     return {
       direction: {
@@ -39,8 +38,6 @@ export default {
   },
   computed: {
     activeDestinations: function() {
-      this.$store.state.refresh;
-      console.log("active");
       return this.$store.getters.activeDestinations;
     },
   },
