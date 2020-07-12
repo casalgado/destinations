@@ -4,54 +4,80 @@
     :cx="destination.lon"
     :cy="destination.lat"
     :r="destination.radius"
-    :fill="this.defaultColor"
+    :fill="this.configuration.default.color"
   />
 </template>
 
 <script>
 import { gsap } from "gsap";
 import { mapState } from "vuex";
+import { PointerHelpers } from "@/mixins/PointerHelpers";
 export default {
   name: "Pointer",
   props: {
     destination: Object,
   },
+  mixins: [PointerHelpers],
   computed: {
+    filter: function() {
+      return this.configuration.filter;
+    },
+    scaling: function() {
+      return this.configuration.scaling;
+    },
     duration: function() {
-      return this.destination.radius;
+      return this.destination.duration;
     },
-    colorScaling: function() {
-      return this.scaling.color;
+    Dmax: function() {
+      return this.configuration.scaling.maxDuration;
     },
-    sizeScaling: function() {
-      return this.scaling.size;
+    Dmin: function() {
+      return this.configuration.scaling.minDuration;
     },
     durationsChange: function() {
       return this.$store.getters.durations.reduce((total, current) => {
         return current + total;
       }, 0);
     },
-    ...mapState([
-      "maxRadius",
-      "minRadius",
-      "maxColor",
-      "minColor",
-      "showOnly",
-      "animationDuration",
-      "scaling",
-      "colorScalingAlgorithm",
-      "defaultColor",
-    ]),
+    colorScaling: function() {
+      return this.scaling.color.active;
+    },
+    sizeScaling: function() {
+      return this.scaling.size.active;
+    },
+    filtering: function() {
+      return this.configuration.filter.show;
+    },
+    ...mapState(["configuration"]),
   },
   methods: {
+    resize() {
+      const { pointer } = this.$refs;
+      gsap.to(pointer, {
+        duration: this.scaling.size.duration,
+        attr: { r: this.getScaledRadius(this.duration) },
+        ease: "easeOut",
+      });
+    },
+    recolor() {
+      const { pointer } = this.$refs;
+      gsap.to(pointer, {
+        duration: this.scaling.color.duration,
+        attr: { fill: this.getScaledColor(this.duration) },
+        ease: "easeOut",
+      });
+    },
     getScaledRadius: function(duration) {
-      let Rmax = this.maxRadius;
-      let Rmin = this.minRadius;
-      let Dmax = this.scaling.Dmax;
-      let Dmin = this.scaling.Dmin;
-      if (this.sizeScaling) {
+      let Rmax = this.scaling.size.maxRadius;
+      let Rmin = this.scaling.size.minRadius;
+      let Dmax = this.Dmax;
+      let Dmin = this.Dmin;
+      console.log(Dmax);
+      console.log(Dmin);
+      if (this.scaling.size.active) {
         // linear squishing
         let newR = Rmin + (Rmax - Rmin) * ((duration - Dmin) / (Dmax - Dmin));
+        // log squishing tbd
         return newR;
       } else {
         return Rmin;
@@ -59,107 +85,53 @@ export default {
     },
     getScaledColor: function(duration) {
       // Dmax stands for Max Duration
-      let Dmax = this.scaling.Dmax;
-      let Dmin = this.scaling.Dmin;
+      let Dmax = this.Dmax;
+      let Dmin = this.Dmin;
+      // mix is a number from 0 to 1
       let mix = (duration - Dmin) / (Dmax - Dmin);
-      if (this.colorScaling) {
-        // console.log(` `);
-        // console.log(` `);
-        // console.log(`duration: ${duration}`);
-        // console.log(`Dmin: ${Dmin}`);
-        // console.log(`Dmax: ${Dmax}`);
-        // console.log(`mix: ${mix}`);
-        let c1 = this.rgbStringToArray(this.maxColor)
+      // if color scaling is active
+      if (this.scaling.color.active) {
+        // get each color from state, squish into 0..1 range and inverse color compression
+        let c1 = this.rgbStringToArray(this.scaling.color.maxColor)
           .map((e) => parseInt(e) / 255)
-          .map((e) => this.invertCompression(e, this.colorScalingAlgorithm));
-        let c2 = this.rgbStringToArray(this.minColor)
+          .map((e) => this.invertCompression(e, this.scaling.color.algorithm));
+        let c2 = this.rgbStringToArray(this.scaling.color.minColor)
           .map((e) => parseInt(e) / 255)
-          .map((e) => this.invertCompression(e, this.colorScalingAlgorithm));
-        // console.log(`c1 ${this.maxColor}`);
-        // console.log(`-   c1 inverted: ${c1}`);
-        // console.log(`c2 ${this.minColor}`);
-        // console.log(`-   c2 inverted: ${c2}`);
+          .map((e) => this.invertCompression(e, this.scaling.color.algorithm));
+
+        // mix both colors together and produce a resulting color 'r'
         let r1 = [];
         c1.forEach((e, i) => {
           r1.push(e * (1 - mix) + c2[i] * mix);
         });
-        // console.log(`r1 mixed: ${r1}`);
+
+        // reapply compression to r and expand into 0..255 range
         r1 = r1.map(
-          (e) => this.reapplyCompression(e, this.colorScalingAlgorithm) * 255
+          (e) => this.reapplyCompression(e, this.scaling.color.algorithm) * 255
         );
-        // console.log(`r1 compressed:(${r1})`);
+
+        // return as rgb string
         return `rgb(${r1})`;
       } else {
-        return this.defaultColor;
+        return this.configuration.default.color;
       }
-    },
-    rgbStringToArray(string) {
-      return string
-        .slice(0, -1)
-        .split("(")[1]
-        .split(",");
-    },
-    invertCompression(num, blending) {
-      switch (blending) {
-        case "squared":
-          return Math.pow(num, 2);
-        case "gamma":
-          if (num > 0.04045) {
-            return Math.pow((num + 0.055) / 1.055, 2.4);
-          } else {
-            return num / 12.92;
-          }
-        default:
-          return num;
-      }
-    },
-    reapplyCompression(num, blending) {
-      switch (blending) {
-        case "squared":
-          return Math.pow(num, 0.5);
-        case "gamma":
-          if (num > 0.0031308) {
-            return 1.055 * Math.pow(num, 1 / 2.4) - 0.055;
-          } else {
-            return num * 12.92;
-          }
-        default:
-          return num;
-      }
-    },
-    resize() {
-      const { pointer } = this.$refs;
-      let newR = this.getScaledRadius(this.destination.duration);
-      gsap.to(pointer, {
-        duration: this.animationDuration,
-        attr: { r: newR },
-        ease: "easeOut",
-      });
-    },
-    recolor() {
-      const { pointer } = this.$refs;
-      let newC = this.getScaledColor(this.destination.duration);
-      gsap.to(pointer, {
-        duration: 2,
-        attr: { fill: newC },
-        ease: "easeOut",
-      });
     },
   },
   watch: {
-    showOnly() {
+    filtering() {
       const { pointer } = this.$refs;
-      if (this.showOnly.includes(this.destination.id)) {
+      console.log(this.filter.show);
+      if (this.filter.show.includes(this.destination.id)) {
         gsap.to(pointer, {
-          duration: this.animationDuration,
-          attr: { r: 8 },
-          ease: "elastic",
+          duration: this.filter.duration,
+          attr: { r: this.configuration.default.radius },
+          ease: this.filter.easin,
         });
       } else {
         gsap.to(pointer, {
-          duration: this.animationDuration,
-          attr: { r: 2 },
-          ease: "expo",
+          duration: this.filter.duration,
+          attr: { r: this.configuration.filter.hiddenRadius },
+          ease: this.filter.easout,
         });
       }
     },

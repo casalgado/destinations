@@ -43,21 +43,43 @@ function lonScale(coord) {
 export default new Vuex.Store({
   state: {
     destinations: [{ ...emptyDestination }],
-    showOnly: [],
-    animationDuration: 0.8,
-    maxRadius: 20,
-    minRadius: 5,
-    maxColor: "rgb(176,0,0)",
-    minColor: "rgb(254,255,0)",
-    defaultColor: "rgb(63,111,222)",
-    colorScalingAlgorithm: "",
-    scaling: {
-      color: false,
-      size: false,
-      Dmax: 0,
-      Dmin: 0,
+    configuration: {
+      default: {
+        color: "rgb(63,111,222)",
+        radius: 10,
+      },
+      animation: {
+        active: false,
+        period: "period",
+        timeframe: 0,
+        show: [],
+      },
+      filter: {
+        show: [],
+        duration: 0.8,
+        hiddenRadius: 2,
+        easin: "elastic",
+        easeout: "expo",
+      },
+      scaling: {
+        size: {
+          active: false,
+          algorith: "linear",
+          minRadius: 5,
+          maxRadius: 20,
+          duration: 0.8,
+        },
+        color: {
+          active: false,
+          algorith: "default",
+          minColor: "rgb(254,255,0)",
+          maxColor: "rgb(176,0,0)",
+          duration: 3,
+        },
+        minDuration: 1,
+        maxDuration: 1,
+      },
     },
-    refresh: true,
   },
   getters: {
     activeDestinations: (state) => {
@@ -110,15 +132,13 @@ export default new Vuex.Store({
       state.destinations = state.destinations.sort(compare);
     },
     showOnly(state, payload) {
-      state.showOnly = payload;
+      state.configuration.filter.show = payload;
     },
     scalingProps(state, payload) {
-      let props = {};
-      props.color = payload.color;
-      props.size = payload.size;
-      props.Dmax = payload.Dmax;
-      props.Dmin = payload.Dmin;
-      state.scaling = { ...props };
+      state.configuration.scaling.size.active = payload.size;
+      state.configuration.scaling.color.active = payload.color;
+      state.configuration.scaling.maxDuration = payload.Dmax;
+      state.configuration.scaling.minDuration = payload.Dmin;
     },
     setDmaxDmin(state) {
       let Dmax = Math.max(
@@ -131,8 +151,8 @@ export default new Vuex.Store({
           .filter((d) => d.active)
           .map((e) => parseInt(e.duration))
       );
-      state.scaling.Dmax = Dmax;
-      state.scaling.Dmin = Dmin;
+      state.configuration.scaling.maxDuration = Dmax;
+      state.configuration.scaling.minDuration = Dmin;
     },
   },
   actions: {

@@ -1,6 +1,9 @@
 <template>
   <div>
     <Map />
+    <ul>
+      <li v-for="c in this.configuration" :key="c.id">{{ c }}</li>
+    </ul>
     <DurationsFilter />
     <DurationsScaling />
     <Animation />
@@ -47,6 +50,9 @@ export default {
     },
     allDestinations: function() {
       return this.$store.state.destinations;
+    },
+    configuration: function() {
+      return this.$store.state.configuration;
     },
   },
 };

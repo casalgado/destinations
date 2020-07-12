@@ -50,3 +50,29 @@ let o = {
     commit: null,
   },
 };
+
+let config = {
+  animation: {
+    active: false,
+    period: "period",
+    timeframe: 0,
+  },
+  scaling: {
+    size: {
+      active: false,
+      algorith: "",
+      minRadius: 0,
+      maxRadius: 0,
+      duration: 0,
+    },
+    color: {
+      active: false,
+      algorith: "",
+      minColor: "rgb",
+      maxColor: "rgb",
+      duration: 0,
+    },
+    minDuration: 0,
+    maxDuration: 0,
+  },
+};
