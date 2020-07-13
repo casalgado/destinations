@@ -47,7 +47,7 @@
 import moment from "moment";
 import { countries } from "@/countries";
 export default {
-  name: "InputRow",
+  name: "TheTableRow",
   props: {
     id: Number,
     populate: Object,

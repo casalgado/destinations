@@ -94,7 +94,9 @@ export default new Vuex.Store({
   },
   mutations: {
     loadState(state, payload) {
-      state.destinations = payload;
+      console.log(payload);
+      state.destinations = payload.destinations || state.destinations;
+      state.configuration = payload.configuration || state.configuration;
     },
     addDestination(state) {
       let id = state.destinations.length;
@@ -131,7 +133,7 @@ export default new Vuex.Store({
       }
       state.destinations = state.destinations.sort(compare);
     },
-    showOnly(state, payload) {
+    filter(state, payload) {
       state.configuration.filter.show = payload;
     },
     scalingProps(state, payload) {

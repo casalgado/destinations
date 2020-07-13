@@ -14,8 +14,9 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 export default {
-  name: "DurationsScaling",
+  name: "ControlScaling",
   data() {
     return {
       scaling: {
@@ -30,6 +31,7 @@ export default {
     activeDestinations: function() {
       return this.$store.getters.activeDestinations;
     },
+    ...mapState(["configuration"]),
   },
   methods: {
     update: function() {
@@ -45,7 +47,8 @@ export default {
     },
   },
   mounted() {
-    this.update();
+    this.scaling.size = this.configuration.scaling.size.active;
+    this.scaling.color = this.configuration.scaling.color.active;
   },
 };
 </script>

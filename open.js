@@ -9,6 +9,13 @@
     timeframe: 0,
   }
 - test all possible cases at onChange in InputRow
+- change components to multi-word components, vue styleguide
+- change 'buttons' dir to 'actions' dir, add Base, App, or V to component names in this dir
+- Components that should only ever have a single active instance should begin with 
+  the The prefix, to denote that there can be only one. (table, dashboard)
+- change InputRow component to TheTableInputRow
+- remove nested directories, show relationships with component names
+- modify components according to Component/instance options order in https://vuejs.org/v2/style-guide/
 
 <ul class="print">
   <li v-for="a in activeDestinations" :key="a.id">{{ a }}</li>
@@ -22,7 +29,7 @@
 let o = {
   DurationFilter: {
     get: activeDestinations,
-    commits: ShowOnly,
+    commits: filter,
   },
   DurationScaling: {
     get: activeDestinations,
@@ -30,7 +37,7 @@ let o = {
   },
   Animation: {
     get: activeDestinations,
-    commits: ShowOnly,
+    commits: filter,
   },
   Save: {
     get: null,

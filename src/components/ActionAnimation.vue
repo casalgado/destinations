@@ -5,7 +5,7 @@
 <script>
 import moment from "moment";
 export default {
-  name: "Animation",
+  name: "ActionAnimation",
   data() {
     return {
       btnText: "animate",
@@ -47,7 +47,7 @@ export default {
 
         // hide all destinations
         let shown = [];
-        this.$store.commit("showOnly", shown);
+        this.$store.commit("filter", shown);
 
         // find earliest arrival date to set as start of animation
         let earliestArrival = this.arrivals
@@ -75,7 +75,7 @@ export default {
             this.arrivals.forEach((e) => {
               if (e.arrival.isSame(current, period)) {
                 shown.push(e.id);
-                this.$store.commit("showOnly", shown);
+                this.$store.commit("filter", shown);
               }
             });
             // clear interval when current = latest

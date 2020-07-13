@@ -28,7 +28,7 @@
 
 <script>
 export default {
-  name: "DurationsFilter",
+  name: "ControlFilter",
   data() {
     return {
       direction: ">=",
@@ -81,7 +81,7 @@ export default {
           break;
       }
 
-      this.$store.commit("showOnly", shown);
+      this.$store.commit("filter", shown);
     },
   },
 };

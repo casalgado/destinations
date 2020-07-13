@@ -2,7 +2,7 @@
   <div id="map-container">
     <img id="map-background" src="@/assets/world.svg" alt="" />
     <svg id="map">
-      <Pointer
+      <TheMapPointer
         v-for="dest in activeDestinations"
         :key="dest.id"
         :destination="dest"
@@ -12,10 +12,10 @@
 </template>
 
 <script>
-import Pointer from "./Pointer.vue";
+import TheMapPointer from "./TheMapPointer.vue";
 export default {
   name: "Map",
-  components: { Pointer },
+  components: { TheMapPointer },
   computed: {
     activeDestinations: function() {
       return this.$store.getters.activeDestinations;

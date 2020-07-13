@@ -11,20 +11,20 @@
         <th @click="sortBy('departure')">departure</th>
         <th @click="sortBy('duration')">duration</th>
       </tr>
-      <InputRow
-        v-for="d in activeDestinations"
-        :key="d.id"
-        :id="d.id"
-        :populate="d"
+      <TheTableRow
+        v-for="destination in activeDestinations"
+        :key="destination.id"
+        :id="destination.id"
+        :populate="destination"
       />
     </table>
   </div>
 </template>
 <script>
-import InputRow from "./InputRow";
+import TheTableRow from "./TheTableRow";
 export default {
-  name: "Table",
-  components: { InputRow },
+  name: "TheTable",
+  components: { TheTableRow },
   data() {
     return {
       direction: {
@@ -70,8 +70,5 @@ table {
   border-right: none;
   border-bottom: none;
   color: var(--color-neutral);
-}
-button {
-  margin: 10px;
 }
 </style>

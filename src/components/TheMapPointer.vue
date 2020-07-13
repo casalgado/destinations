@@ -13,7 +13,7 @@ import { gsap } from "gsap";
 import { mapState } from "vuex";
 import { PointerHelpers } from "@/mixins/PointerHelpers";
 export default {
-  name: "Pointer",
+  name: "TheMapPointer",
   props: {
     destination: Object,
   },
@@ -72,8 +72,6 @@ export default {
       let Rmin = this.scaling.size.minRadius;
       let Dmax = this.Dmax;
       let Dmin = this.Dmin;
-      console.log(Dmax);
-      console.log(Dmin);
       if (this.scaling.size.active) {
         // linear squishing
         let newR = Rmin + (Rmax - Rmin) * ((duration - Dmin) / (Dmax - Dmin));
@@ -145,6 +143,10 @@ export default {
       this.resize();
       this.recolor();
     },
+  },
+  mounted() {
+    this.resize();
+    this.recolor();
   },
 };
 </script>
