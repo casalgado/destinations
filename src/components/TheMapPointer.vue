@@ -5,6 +5,7 @@
     :cy="destination.lat"
     :r="destination.radius"
     :fill="this.configuration.default.color"
+    @mouseover="showInfo"
   />
 </template>
 
@@ -19,33 +20,33 @@ export default {
   },
   mixins: [PointerHelpers],
   computed: {
-    filter: function() {
+    filter: function () {
       return this.configuration.filter;
     },
-    scaling: function() {
+    scaling: function () {
       return this.configuration.scaling;
     },
-    duration: function() {
+    duration: function () {
       return this.destination.duration;
     },
-    Dmax: function() {
+    Dmax: function () {
       return this.configuration.scaling.maxDuration;
     },
-    Dmin: function() {
+    Dmin: function () {
       return this.configuration.scaling.minDuration;
     },
-    durationsChange: function() {
+    durationsChange: function () {
       return this.$store.getters.durations.reduce((total, current) => {
         return current + total;
       }, 0);
     },
-    colorScaling: function() {
+    colorScaling: function () {
       return this.scaling.color.active;
     },
-    sizeScaling: function() {
+    sizeScaling: function () {
       return this.scaling.size.active;
     },
-    filtering: function() {
+    filtering: function () {
       return this.configuration.filter.show;
     },
     ...mapState(["configuration"]),
@@ -67,7 +68,7 @@ export default {
         ease: "easeOut",
       });
     },
-    getScaledRadius: function(duration) {
+    getScaledRadius: function (duration) {
       let Rmax = this.scaling.size.maxRadius;
       let Rmin = this.scaling.size.minRadius;
       let Dmax = this.Dmax;
@@ -81,7 +82,7 @@ export default {
         return Rmin;
       }
     },
-    getScaledColor: function(duration) {
+    getScaledColor: function (duration) {
       // Dmax stands for Max Duration
       let Dmax = this.Dmax;
       let Dmin = this.Dmin;
@@ -113,6 +114,9 @@ export default {
       } else {
         return this.configuration.default.color;
       }
+    },
+    showInfo: function () {
+      console.log(this.destination);
     },
   },
   watch: {
@@ -151,4 +155,13 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped>
+circle {
+  cursor: pointer;
+}
+
+circle:hover {
+  opacity: 0.5;
+  stroke: white;
+}
+</style>

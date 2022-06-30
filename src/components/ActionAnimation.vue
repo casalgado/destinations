@@ -13,7 +13,7 @@ export default {
     };
   },
   computed: {
-    arrivals: function() {
+    arrivals: function () {
       return this.$store.getters.activeDestinations.map((e) => {
         return {
           arrival: moment(e.arrival),
@@ -23,7 +23,7 @@ export default {
     },
   },
   methods: {
-    animate: function() {
+    animate: function () {
       // function declaration to be used below
       function getMin(min, current) {
         if (min < current) {
@@ -59,19 +59,19 @@ export default {
           .map((e) => e.arrival)
           .reduce(getMax, moment("1900-01-01").format("YYYY-MM-DD"));
 
-        // set animation to start 6 months before earliest arrival
-        let current = moment(earliestArrival).subtract(6, "months");
+        // set animation to start 6 days before earliest arrival
+        let current = moment(earliestArrival).subtract(6, "days");
 
         // set period per interval iteration
-        let period = "month";
+        let period = "day";
 
         // set seconds per interval iteration
-        let seconds = 200;
+        let seconds = 50;
 
         // create interval
         let int = setInterval(
-          function() {
-            this.btnText = current.format("MMM YYYY");
+          function () {
+            this.btnText = current.format("MMM YYYY DD");
             this.arrivals.forEach((e) => {
               if (e.arrival.isSame(current, period)) {
                 shown.push(e.id);

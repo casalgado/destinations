@@ -99,8 +99,16 @@ export default new Vuex.Store({
       state.configuration = payload.configuration || state.configuration;
     },
     addDestination(state) {
+      let newDestination = { ...emptyDestination };
       let id = state.destinations.length;
-      let newField = { ...emptyDestination };
+
+      if (state.destinations.filter((d) => d.active).length > 0) {
+        let lastDate = state.destinations.filter((d) => d.active).reverse()[0]
+          .departure;
+        newDestination.arrival = lastDate;
+      }
+
+      let newField = { ...newDestination };
       newField.id = id;
       state.destinations.push(newField);
     },
