@@ -28,13 +28,13 @@ export default {
     };
   },
   computed: {
-    activeDestinations: function() {
+    activeDestinations: function () {
       return this.$store.getters.activeDestinations;
     },
     ...mapState(["configuration"]),
   },
   methods: {
-    update: function() {
+    update: function () {
       let Dmax = Math.max(
         ...this.activeDestinations.map((e) => parseInt(e.duration))
       );
@@ -48,7 +48,8 @@ export default {
   },
   mounted() {
     this.scaling.size = this.configuration.scaling.size.active;
-    this.scaling.color = this.configuration.scaling.color.active;
+    this.scaling.color = true;
+    this.update();
   },
 };
 </script>

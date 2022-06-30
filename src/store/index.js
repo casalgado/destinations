@@ -80,6 +80,7 @@ export default new Vuex.Store({
         maxDuration: 1,
       },
     },
+    tooltip: {},
   },
   getters: {
     activeDestinations: (state) => {
@@ -90,6 +91,9 @@ export default new Vuex.Store({
     },
     destination: (state) => (id) => {
       return state.destinations.find((d) => d.id === id);
+    },
+    tooltip: (state) => {
+      return state.tooltip;
     },
   },
   mutations: {
@@ -121,6 +125,9 @@ export default new Vuex.Store({
           Object.assign(e, payload);
         }
       });
+    },
+    updateTooltip(state, payload) {
+      state.tooltip = payload;
     },
     sortBy(state, payload) {
       let prop = payload.field;

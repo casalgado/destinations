@@ -1,6 +1,17 @@
 <template>
   <div id="map-container">
     <img id="map-background" src="@/assets/world.svg" alt="" />
+    <div class="tooltip">
+      <p v-if="!tooltip.city">Hover points on the map!</p>
+      <div v-else>
+        <p>city: {{ tooltip.city }}, {{ tooltip.country }}</p>
+        <p>
+          duration of stay: {{ tooltip.duration }} day{{
+            `${tooltip.duration == 1 ? "" : "s"}`
+          }}
+        </p>
+      </div>
+    </div>
     <svg id="map">
       <TheMapPointer
         v-for="dest in activeDestinations"
@@ -17,8 +28,11 @@ export default {
   name: "Map",
   components: { TheMapPointer },
   computed: {
-    activeDestinations: function() {
+    activeDestinations: function () {
       return this.$store.getters.activeDestinations;
+    },
+    tooltip: function () {
+      return this.$store.getters.tooltip;
     },
   },
 };
@@ -47,5 +61,13 @@ export default {
   position: absolute;
   top: 0;
   left: 0;
+}
+
+.tooltip {
+  position: absolute;
+  bottom: 20%;
+  left: 2%;
+  z-index: 99;
+  text-align: left;
 }
 </style>

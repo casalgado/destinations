@@ -1,8 +1,6 @@
 <template>
   <div id="table-container">
-    <button @click="addDestination">
-      add destination
-    </button>
+    <button @click="addDestination">add destination</button>
     <table>
       <tr>
         <th @click="sortBy('city')">city</th>
@@ -37,7 +35,7 @@ export default {
     };
   },
   computed: {
-    activeDestinations: function() {
+    activeDestinations: function () {
       return this.$store.getters.activeDestinations;
     },
   },
@@ -48,7 +46,7 @@ export default {
     removeDestination(payload) {
       this.$store.commit("removeDestination", payload);
     },
-    sortBy: function(field) {
+    sortBy: function (field) {
       this.direction[field] = !this.direction[field];
       this.$store.commit("sortBy", {
         field: field,
@@ -70,5 +68,9 @@ table {
   border-right: none;
   border-bottom: none;
   color: var(--color-neutral);
+}
+
+button {
+  margin-bottom: 10px;
 }
 </style>

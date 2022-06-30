@@ -1,7 +1,7 @@
 <template>
   <form>
     <label for="durationFilter" id="dflabel"
-      >Show me destinations I have visited for:</label
+      >Show destinations visited for:</label
     >
     <select
       name="durationFilter"
@@ -36,17 +36,16 @@ export default {
     };
   },
   computed: {
-    activeDestinations: function() {
+    activeDestinations: function () {
       return this.$store.getters.activeDestinations;
     },
-    filterOptions: function() {
+    filterOptions: function () {
       return [
         { value: ">=", text: "more than" },
         { value: "<", text: "less than" },
-        { value: "=", text: "around" },
       ];
     },
-    durationOptions: function() {
+    durationOptions: function () {
       return [
         { value: 0, text: "..." },
         { value: 1, text: "1 day" },
@@ -63,7 +62,7 @@ export default {
     },
   },
   methods: {
-    applyFilter: function() {
+    applyFilter: function () {
       let shown;
       switch (this.direction) {
         case ">=":

@@ -117,6 +117,7 @@ export default {
     },
     showInfo: function () {
       console.log(this.destination);
+      this.$store.commit("updateTooltip", this.destination);
     },
   },
   watch: {

@@ -53,4 +53,5 @@ var CITY_DATA = [
   ["Tallinn", "Estonia", "3", "2016", "2", "86", "624"],
   ["Tartu", "Estonia", "3", "2016", "1", "88", "629"],
   ["Riga", "Latvia", "3", "2016", "2", "93", "623"],
+  ["seoul, vietnam, china, italy, osnabruck, hamburg, bremen, amsterdam"],
 ];

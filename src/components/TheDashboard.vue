@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container">
     <TheMap />
     <ControlFilter />
     <ControlScaling />
@@ -16,6 +16,7 @@ import ControlScaling from "./ControlScaling.vue";
 import ActionAnimation from "./ActionAnimation.vue";
 import ActionSave from "./ActionSave.vue";
 import TheTable from "./TheTable.vue";
+import cities from "../assets/cities_carsalhaz";
 export default {
   name: "TheDashboard",
   data() {
@@ -46,6 +47,8 @@ export default {
       } catch (e) {
         console.log(JSON.parse(localStorage.getItem("destinations")));
       }
+    } else {
+      this.state.destinations = cities;
     }
     if (t) {
       try {
@@ -61,4 +64,8 @@ export default {
   },
 };
 </script>
-<style scoped></style>
+<style scoped>
+.container > * {
+  margin: 15px;
+}
+</style>
